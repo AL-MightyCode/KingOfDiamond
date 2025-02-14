@@ -321,21 +321,6 @@ function initializeMusic() {
 joinBtn.addEventListener('click', () => {
     if (playerName.value && roomId.value) {
         connectWebSocket();
-        ws.onopen = () => {
-            ws.send(JSON.stringify({
-                type: 'join',
-                playerName: playerName.value,
-                roomId: roomId.value
-            }));
-            loginScreen.classList.add('hidden');
-            waitingRoom.classList.remove('hidden');
-            // Try to play music after user interaction
-            if (isMusicPlaying) {
-                bgMusic.play().catch(error => {
-                    console.log("Audio play failed:", error);
-                });
-            }
-        };
     }
 });
 
@@ -369,6 +354,23 @@ function connectWebSocket() {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = window.location.hostname === 'localhost' ? 'localhost:3000' : window.location.host;
     ws = new WebSocket(`${protocol}//${host}`);
+    
+    // Wait for connection to be established before sending join message
+    ws.onopen = () => {
+        ws.send(JSON.stringify({
+            type: 'join',
+            playerName: playerName.value,
+            roomId: roomId.value
+        }));
+        loginScreen.classList.add('hidden');
+        waitingRoom.classList.remove('hidden');
+        // Try to play music after user interaction
+        if (isMusicPlaying) {
+            bgMusic.play().catch(error => {
+                console.log("Audio play failed:", error);
+            });
+        }
+    };
     
     ws.onmessage = (event) => {
         try {
