@@ -93,8 +93,8 @@ class GameRoom {
             return false;
         }
 
-        // Don't add more than 5 players
-        if (this.players.size >= 5) {
+        // Don't add more than 4 players
+        if (this.players.size >= 4) {
             ws.send(JSON.stringify({
                 type: 'error',
                 message: 'Room is full. Please choose a different room ID.'
@@ -345,8 +345,8 @@ wss.on('connection', (ws) => {
                         players: Array.from(currentRoom.players.values()).map(p => p.name)
                     });
 
-                    // If we just added the 5th player, trigger game start
-                    if (currentRoom.players.size === 5) {
+                    // If we just added the 4th player, trigger game start
+                    if (currentRoom.players.size === 4) {
                         setTimeout(() => currentRoom.startGame(), 6000);
                     }
                 }
