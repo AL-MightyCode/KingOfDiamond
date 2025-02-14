@@ -137,6 +137,8 @@ class GameRoom {
         if (this.currentRound.timer) {
             clearTimeout(this.currentRound.timer);
         }
+        this.currentRound.endTime = Date.now() + 30000;
+        
         this.broadcast({
             type: 'roundStart'
         });
@@ -148,6 +150,11 @@ class GameRoom {
     }
 
     processRound() {
+        if (this.currentRound.timer) {
+            clearTimeout(this.currentRound.timer);
+            this.currentRound.timer = null;
+        }
+
         let submittedNumbers = [];
         let allPlayersEliminated = true;
         
@@ -230,12 +237,11 @@ class GameRoom {
             } else {
                 // Clear numbers and start next round after delay
                 this.currentRound.numbers.clear();
-                if (this.currentRound.timer) {
-                    clearTimeout(this.currentRound.timer);
-                    this.currentRound.timer = null;
-                }
-                // Make sure to start next round
-                setTimeout(() => this.startRound(), 5000);
+                setTimeout(() => {
+                    if (this.gameState !== 'finished') {
+                        this.startRound();
+                    }
+                }, 5000);
             }
         }
     }
@@ -252,7 +258,9 @@ class GameRoom {
                 }
             }
         });
-        return activeCount > 0 && submittedCount === activeCount;
+        return activeCount > 0 && 
+            submittedCount === activeCount && 
+            Date.now() < this.currentRound.endTime;
     }
 }
 
