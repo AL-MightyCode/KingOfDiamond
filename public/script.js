@@ -82,8 +82,8 @@ function startGameCountdown() {
 
 // Update waiting room UI
 function updateWaitingRoom(data) {
-    const count = Math.min(data.count, 5);
-    playerCounter.textContent = `${count}/5 Players`;
+    const count = Math.min(data.count, 4);
+    playerCounter.textContent = `${count}/4 Players`;
     const playersList = data.playerNumbers
         .map(p => `
             <div class="player-item ${p.name === playerName.value ? 'current-player' : ''}">
@@ -95,7 +95,7 @@ function updateWaitingRoom(data) {
         <div class="players-list">
             ${playersList}
         </div>
-        ${count >= 5 ? '<div class="starting-message">Game starting soon...</div>' : ''}
+        ${count >= 4 ? '<div class="starting-message">Game starting soon...</div>' : ''}
     `;
 }
 
